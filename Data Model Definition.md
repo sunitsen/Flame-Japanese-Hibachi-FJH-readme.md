@@ -1,486 +1,1025 @@
+# Data Model Documentation
 
-# Flame Japanese Hibachi 🔥🍱
+**Flame Japanese Hibachi - Complete Prisma Data Model**
 
-A production-ready multi-location restaurant ordering and management platform built with Next.js, PostgreSQL, and Prisma.
-
-**Status:** 🚀 In Development | **Last Updated:** January 2024
-
----
-
-## 📋 Quick Links
-
-- **[Data Model Documentation](./DATA_MODEL.md)** - Complete schema design, relationships, and domain architecture
-- **[API Endpoints Reference](./docs/API_ENDPOINTS_REFERENCE.md)** - Full REST API specification
-- **[Implementation Guide](./docs/IMPLEMENTATION_GUIDE.md)** - Phase-by-phase development roadmap
+This document is the authoritative reference for the system's data architecture, domain design, and database schema. Use this as your guide for understanding relationships, constraints, and design decisions.
 
 ---
 
-## ✨ Overview
+## 📖 Table of Contents
 
-Flame Japanese Hibachi is a comprehensive ordering and management system for multi-location hibachi restaurants. The platform enables:
-
-- 🛒 **Customer Ordering** - Browse, select location, customize items, apply promotions
-- 📦 **Shop Management** - Manage locations, menus, inventory, orders, and staff
-- 👥 **Role-Based Access** - Super Admin → Shop Admin → Employee → Customer → Guest
-- 🚚 **DoorDash Integration** - Seamless order handoff with tracking and retry logic
-- 📊 **Analytics & Reporting** - Shop-level and system-wide performance metrics
-- 🔐 **Security & Compliance** - Audit logging, soft deletes, RBAC, encrypted sessions
-- 🌐 **Multi-Provider Auth** - Local, Google, Facebook, Apple OAuth support
-
----
-
-## 🏗️ Architecture
-
-**Pattern:** Modular Monolith with Domain-Driven Design  
-**Database:** PostgreSQL + Prisma ORM  
-**Frontend:** Next.js 14+ (App Router)  
-**Authentication:** NextAuth.js / Auth.js with JWT  
-**Hosting:** (TBD - AWS/Vercel recommended)  
-
-### Core Domains
-
-| Domain | Models | Purpose |
-|--------|--------|---------|
-| **Authentication** | User, AuthAccount, Session, UserProfile | Identity & auth provider management |
-| **Shop & Location** | Shop, Address, StoreOperatingHours, StoreStatus | Multi-location operations |
-| **Menu & Inventory** | MenuItem, MenuCategory, ShopMenuItem, ModifierGroup, ModifierOption | Global menu + store overrides |
-| **Cart & Checkout** | ShoppingCart, CartItem, CustomerAddress, SavedPaymentMethod | Stateful shopping experience |
-| **Order & Fulfillment** | Order, OrderItem, OrderItemModifier, GuestOrderProfile, DoorDashDispatch | Order lifecycle & external integration |
-| **Promotions & Discounts** | Promotion, Coupon | Discount eligibility & application |
-| **Access Control & Audit** | EmployeeAssignment, AuditLog | RBAC & compliance logging |
-| **Analytics** | AnalyticsSnapshot | Metrics & reporting |
-
-**Total:** 27 models across 8 domains
-
-See [Data Model Documentation](./DATA_MODEL.md) for complete design details.
+1. [System Architecture](#system-architecture)
+2. [Core Domains](#core-domains)
+3. [Entity Relationship Overview](#entity-relationship-overview)
+4. [Complete Model Reference](#complete-model-reference)
+5. [Relationship Design](#relationship-design)
+6. [Enums Reference](#enums-reference)
+7. [Access Patterns](#access-patterns)
+8. [Soft Delete Strategy](#soft-delete-strategy)
+9. [Indexes & Performance](#indexes--performance)
+10. [Common Queries](#common-queries)
 
 ---
 
-## 🎯 Features
+## System Architecture
 
-### For Customers
-- ✅ Guest checkout (no registration required)
-- ✅ Social authentication (Google, Facebook, Apple)
-- ✅ Save delivery addresses and payment methods
-- ✅ Browse shops by location
-- ✅ View menu with item availability
-- ✅ Add items to cart with modifiers/customizations
-- ✅ Apply coupons and promotions
-- ✅ Track order status in real-time
-- ✅ View order history
-- ✅ Loyalty points (future feature)
+### Design Pattern: Modular Monolith
 
-### For Shop Admins
-- ✅ Manage shop information and operating hours
-- ✅ Override menu item availability per location
-- ✅ Adjust pricing for items at specific shops
-- ✅ Manage inventory/stock quantities
-- ✅ View and process incoming orders
-- ✅ Update order status (confirm, preparing, ready)
-- ✅ Handoff orders to DoorDash
-- ✅ View shop-specific analytics and metrics
-- ✅ Manage shop employees and permissions
-- ✅ Create store-specific promotions
-
-### For Super Admin
-- ✅ Create and delete shops
-- ✅ Manage global menu items (all shops)
-- ✅ Create and manage global promotions
-- ✅ Create and manage coupons
-- ✅ View system-wide analytics
-- ✅ Compare performance across stores
-- ✅ Access audit logs for all actions
-- ✅ Manage user roles and permissions
-
-### For Employees
-- ✅ View shop orders in real-time
-- ✅ Update order status
-- ✅ Manage menu item availability
-- ✅ Update inventory/stock
-- ✅ View assigned shop's operations
-
-### System Features
-- ✅ DoorDash integration with idempotent handoff
-- ✅ Automatic retry with exponential backoff
-- ✅ Soft deletes for compliance and history
-- ✅ Complete audit trail
-- ✅ Role-based access control (RBAC)
-- ✅ Multi-location support
-- ✅ Guest order tracking
-- ✅ Pre-computed analytics snapshots
-
----
-
-## 🛠️ Tech Stack
-
-### Backend
-- **Framework:** Next.js 14+ (API Routes or App Router)
-- **Database:** PostgreSQL 14+
-- **ORM:** Prisma 5+
-- **Authentication:** NextAuth.js v5 / Auth.js
-- **Validation:** Zod or Yup
-- **Error Handling:** Custom error classes + global middleware
-- **Logging:** Winston or Pino
-- **Task Queue:** Bull (for background jobs)
-- **Email:** SendGrid / AWS SES
-
-### Frontend
-- **Framework:** Next.js 14+ (React 18+)
-- **Styling:** Tailwind CSS
-- **State Management:** React Context / Zustand
-- **API Client:** SWR or React Query
-- **UI Components:** Shadcn/ui or custom
-
-### DevOps
-- **Version Control:** Git + GitHub
-- **CI/CD:** GitHub Actions
-- **Database Migration:** Prisma Migrate
-- **Testing:** Jest + Supertest
-- **Code Quality:** ESLint + Prettier
-
----
-
-## 🚀 Quick Start
-
-### Prerequisites
-- Node.js 18+
-- npm/yarn
-- PostgreSQL 14+
-
-### Installation
-
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/yourusername/flame-japanese-hibachi.git
-   cd flame-japanese-hibachi
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Setup environment variables**
-   ```bash
-   cp .env.example .env.local
-   ```
-
-   Update `.env.local` with:
-   ```env
-   # Database
-   DATABASE_URL="postgresql://user:password@localhost:5432/flame_hibachi"
-
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
-
-   # OAuth Providers
-   GOOGLE_CLIENT_ID="..."
-   GOOGLE_CLIENT_SECRET="..."
-   FACEBOOK_APP_ID="..."
-   FACEBOOK_APP_SECRET="..."
-   APPLE_CLIENT_ID="..."
-   APPLE_TEAM_ID="..."
-   APPLE_KEY_ID="..."
-   APPLE_PRIVATE_KEY="..."
-
-   # DoorDash Integration
-   DOORDASH_API_KEY="..."
-   DOORDASH_MERCHANT_ID="..."
-
-   # External Services
-   SENDGRID_API_KEY="..."
-   STRIPE_PUBLIC_KEY="..."
-   STRIPE_SECRET_KEY="..."
-   ```
-
-4. **Initialize the database**
-   ```bash
-   npx prisma migrate dev --name init
-   npx prisma generate
-   ```
-
-5. **Seed the database (optional)**
-   ```bash
-   npx prisma db seed
-   ```
-
-6. **Start development server**
-   ```bash
-   npm run dev
-   ```
-
-7. **Open in browser**
-   ```
-   http://localhost:3000
-   ```
-
-### Database Explorer (Optional)
-```bash
-npx prisma studio
-```
-Opens interactive database UI at `http://localhost:5555`
-
----
-
-## 📁 Project Structure
+The system is built as a **modular monolith** with clear domain boundaries but unified deployment. Each domain is independently testable and maintainable but uses the same database and API gateway.
 
 ```
-flame-japanese-hibachi/
-├── prisma/
-│   ├── schema.prisma          # Prisma data model
-│   ├── migrations/            # Database migrations
-│   └── seed.ts                # Seed script
-│
-├── src/
-│   ├── api/                   # API routes/endpoints
-│   │   ├── auth/
-│   │   ├── shops/
-│   │   ├── menu/
-│   │   ├── orders/
-│   │   ├── cart/
-│   │   └── [other domains]
-│   │
-│   ├── middleware/            # Auth, RBAC, error handling
-│   ├── services/              # Business logic
-│   ├── lib/                   # Utilities (Prisma client, auth, etc.)
-│   ├── types/                 # TypeScript types
-│   ├── components/            # React components (frontend)
-│   ├── pages/                 # Next.js pages
-│   └── styles/                # Global styles
-│
-├── tests/
-│   ├── unit/
-│   ├── integration/
-│   └── fixtures/
-│
-├── docs/
-│   ├── DATA_MODEL.md          # Schema design (this file)
-│   ├── API_ENDPOINTS_REFERENCE.md
-│   └── IMPLEMENTATION_GUIDE.md
-│
-├── .env.example               # Example environment variables
-├── package.json
-├── tsconfig.json
-├── README.md                  # This file
-└── DATA_MODEL.md              # Data model documentation
+┌─────────────────────────────────────────────────┐
+│         API Gateway / Route Layer                │
+├─────────────────────────────────────────────────┤
+│  Auth    │  Shop    │  Menu    │  Order  │ ...  │
+│ Service  │ Service  │ Service  │ Service │      │
+├─────────────────────────────────────────────────┤
+│           Prisma ORM (Data Access Layer)        │
+├─────────────────────────────────────────────────┤
+│    PostgreSQL Database (Single Instance)        │
+└─────────────────────────────────────────────────┘
+```
+
+### Key Principles
+
+1. **Domain Isolation** - Each domain has independent tables; cross-domain queries are minimal
+2. **Role-Based Segregation** - Access control enforced at API layer, not DB constraints
+3. **Soft Deletes** - Data never hard-deleted; deletedAt field marks inactive records
+4. **Audit Trail** - All state changes logged in AuditLog for compliance
+5. **Scalable Normalization** - Proper normalization with flexibility where needed (JSON fields)
+
+---
+
+## Core Domains
+
+### 1. Authentication Domain
+**Models:** User, UserProfile, AuthAccount, Session
+
+**Purpose:** Identity management and authentication provider integration
+
+**Key Relationships:**
+- User (1) → UserProfile (1)
+- User (1) → AuthAccount (many) - supports multiple auth providers per user
+- User (1) → Session (many) - active sessions
+
+**Design Notes:**
+- Supports local auth + multiple OAuth providers
+- Sessions stored in DB (can be migrated to Redis for scale)
+- AuthAccount stores provider-specific data (access tokens, etc.)
+
+---
+
+### 2. Shop & Location Domain
+**Models:** Shop, Address, StoreOperatingHours, StoreStatus
+
+**Purpose:** Multi-location restaurant operations management
+
+**Key Relationships:**
+- Shop (1) → Address (1)
+- Shop (1) → StoreOperatingHours (1)
+- Shop (1) → StoreStatus (1)
+- User (Shop Admin) → Shop (1)
+
+**Design Notes:**
+- Each shop is independent operational unit
+- Address stores geographic data for location services
+- StoreOperatingHours uses JSON for flexibility (hours vary by day)
+- StoreStatus tracks real-time operational state (open/closed/maintenance)
+- Soft delete on Shop preserves historical orders
+
+---
+
+### 3. Menu & Inventory Domain
+**Models:** MenuItem, MenuCategory, ShopMenuItem, ModifierGroup, ModifierOption
+
+**Purpose:** Global menu definitions with store-level customization
+
+**Key Relationships:**
+- MenuCategory (1) → MenuItem (many)
+- MenuItem (1) → ModifierGroup (many) - options like "Sauce", "Temperature"
+- ModifierGroup (1) → ModifierOption (many) - e.g., "Spicy", "Mild"
+- MenuItem (1) → ShopMenuItem (many) - store-specific overrides
+
+**Design Notes:**
+- **MenuItem** is the global source-of-truth (created by Super Admin)
+- **ShopMenuItem** allows per-location customization without duplicating MenuItem
+- ModifierGroup/Option enables complex product customization
+- availabilityScope enum controls scope: ALL_SHOPS, SPECIFIC_SHOPS, or STORE_OVERRIDE
+- Shop can override price, availability, and stock without modifying global item
+
+**Example Flow:**
+```
+Global MenuItem "Hibachi Chicken" ($18.99)
+    ↓
+Shop A overrides: $19.99, 30 in stock
+Shop B overrides: UNAVAILABLE (out of stock)
+Shop C uses global price and unlimited stock
 ```
 
 ---
 
-## 📊 Development Phases
+### 4. Cart & Checkout Domain
+**Models:** ShoppingCart, CartItem, CustomerAddress, SavedPaymentMethod
 
-| Phase | Duration | Focus | Status |
-|-------|----------|-------|--------|
-| 1 | 2 weeks | Authentication (OAuth, sessions) | ⏳ Planned |
-| 2 | 1 week | Shop Management (CRUD, admin) | ⏳ Planned |
-| 3 | 1 week | Menu Management (items, modifiers) | ⏳ Planned |
-| 4 | 1 week | Shopping Cart & Checkout | ⏳ Planned |
-| 5 | 2 weeks | Order Management & Lifecycle | ⏳ Planned |
-| 6 | 1 week | DoorDash Integration | ⏳ Planned |
-| 7 | 1 week | Promotions & Coupons | ⏳ Planned |
-| 8 | 1 week | Analytics & Reporting | ⏳ Planned |
-| 9 | 1 week | Access Control & Audit | ⏳ Planned |
-| 10 | 2 weeks | Testing & Security Audit | ⏳ Planned |
-| 11 | 1 week | Deployment Preparation | ⏳ Planned |
-| 12 | 1 week | Beta & Launch | ⏳ Planned |
+**Purpose:** Stateful shopping experience before order placement
 
-**Total Estimated Timeline:** 15-16 weeks to production-ready platform
+**Key Relationships:**
+- ShoppingCart (1) → CartItem (many)
+- CartItem references MenuItem (not stored; fetched for display)
+- User (1) → CustomerAddress (many)
+- User (1) → SavedPaymentMethod (many)
 
-See [Implementation Guide](./docs/IMPLEMENTATION_GUIDE.md) for detailed phase breakdown.
+**Design Notes:**
+- ShoppingCart has expiresAt (24-hour expiration)
+- CartItem stores quantity + selected modifiers as JSON
+- Modifiers re-validated at checkout to prevent price manipulation
+- CustomerAddress links User to Address (allows address sharing/reuse)
+- SavedPaymentMethod stores tokenized payment info (never full credit card)
 
 ---
 
-## 🔐 Security Considerations
+### 5. Order & Fulfillment Domain
+**Models:** Order, OrderItem, OrderItemModifier, GuestOrderProfile, DoorDashDispatch
 
-### Implementation Checklist
-- [ ] All passwords hashed with bcrypt
-- [ ] JWT tokens with short expiration (15 min)
-- [ ] Refresh tokens with longer expiration (7 days)
-- [ ] HTTPS only in production
-- [ ] Secure cookies (httpOnly, sameSite, secure flags)
-- [ ] Input validation on all endpoints (Zod/Yup)
-- [ ] SQL injection prevention (Prisma parameterized queries)
-- [ ] CSRF protection on state-changing endpoints
-- [ ] Rate limiting on auth endpoints (5 req/min per IP)
-- [ ] Rate limiting on API endpoints (100 req/min per user)
-- [ ] Encrypted sensitive fields (SSN, full credit cards - use payment processor)
-- [ ] CORS configured for frontend domains only
-- [ ] API request signing for DoorDash webhooks
-- [ ] Audit logging for all admin actions
-- [ ] Regular secret rotation
+**Purpose:** Order lifecycle from placement to delivery handoff
 
-### Compliance
-- ✅ PCI DSS (credit card handling)
-- ✅ GDPR (user data, soft deletes)
-- ✅ Data retention policies
-- ✅ Audit trail for regulatory review
+**Key Relationships:**
+- Order (1) → OrderItem (many)
+- OrderItem (1) → OrderItemModifier (many)
+- Order (1) → GuestOrderProfile (0..1) - only for guest orders
+- Order (1) → DoorDashDispatch (0..1) - created at handoff time
 
----
+**Order Status Flow:**
+```
+PENDING → CONFIRMED → PREPARING → READY_FOR_PICKUP → 
+HANDOFF_TO_DOORDASH → COMPLETED
 
-## 🧪 Testing
-
-### Running Tests
-```bash
-# Unit tests
-npm run test:unit
-
-# Integration tests
-npm run test:integration
-
-# All tests
-npm test
-
-# With coverage
-npm run test:coverage
+Alternative paths:
+PENDING → CANCELLED (customer cancels)
+PREPARING → FAILED (order error)
 ```
 
-### Load Testing
-```bash
-# Install k6 (Grafana's load testing tool)
-npm install -g k6
+**Design Notes:**
+- Order is immutable after creation (status updates only)
+- OrderItem captures exact state at order time (price, modifiers)
+- GuestOrderProfile stores guest contact info (no User record needed)
+- DoorDashDispatch handles external order sync with retry logic
+- Soft delete NOT used; orders persist forever for audit trail
 
-# Run load test
-k6 run tests/load/order-creation.js
+---
+
+### 6. Promotions & Discounts Domain
+**Models:** Promotion, Coupon
+
+**Purpose:** Flexible discount system with global/store-specific scope
+
+**Key Relationships:**
+- Promotion can be global (shopId = null) or store-specific
+- Coupon applicableShops/applicableItems stored as JSON (flexible targeting)
+
+**Design Notes:**
+- **Promotion:** Internal marketing offers with scheduling
+  - Type: SEASONAL, FLASH_SALE, LOYALTY, REFERRAL, BUNDLE, FIRST_TIME_USER, STORE_OPENING
+  - Scope: Global or shop-specific
+  - Time-bounded: startsAt, endsAt
+  - Usage-limited: maxUsagePerCustomer, maxTotalUsages
+
+- **Coupon:** Redeemable codes customers enter
+  - Code: unique, cryptographically random (prevent enumeration)
+  - Eligibility: minOrderAmount, applicableShops, applicableItems
+  - Limited: maxUsagePerCustomer, maxTotalUsages
+
+**Example:**
+```
+Global Promotion: "Welcome 20% Off" (for first-time customers)
+Store Promotion: "Happy Hour 10% Off" (6pm-8pm, Shop A only)
+Coupon: "WELCOME20" (redeemable, single-use per customer)
 ```
 
 ---
 
-## 📡 API Documentation
+### 7. Access Control & Audit Domain
+**Models:** EmployeeAssignment, AuditLog
 
-Complete API endpoint specification available in [API_ENDPOINTS_REFERENCE.md](./docs/API_ENDPOINTS_REFERENCE.md)
+**Purpose:** Role-based access control and compliance logging
 
-**Key Endpoints:**
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login with email/password
-- `POST /api/auth/oauth/callback` - OAuth provider callback
-- `GET /api/shops` - List all shops
-- `POST /api/orders` - Create order
-- `PUT /api/orders/:id/status` - Update order status
-- `GET /api/profile` - Get user profile
-- `GET /api/analytics/dashboard` - View analytics
+**Key Relationships:**
+- User (1) → EmployeeAssignment (many) - one per shop
+- EmployeeAssignment stores permissions as JSON array
+- AuditLog captures all state changes with actor/timestamp/changes
 
-See full documentation [here](./docs/API_ENDPOINTS_REFERENCE.md).
+**Design Notes:**
+- **EmployeeAssignment:**
+  - Links User to Shop with a role (e.g., "Order Manager")
+  - Permissions are flexible JSON array: ["orders.manage", "menu.view", "inventory.update"]
+  - employmentStatus tracks: ACTIVE, INACTIVE, SUSPENDED, TERMINATED
+  - Soft deletable for historical records
 
----
+- **AuditLog:**
+  - Immutable log of all changes
+  - Captures: action, entityType, entityId, oldValues, newValues
+  - Stores IP + user agent for forensics
+  - Never deleted (compliance requirement)
 
-## 🤝 Contributing
-
-### Development Workflow
-1. Create feature branch: `git checkout -b feature/your-feature`
-2. Make changes and commit: `git commit -am 'Add new feature'`
-3. Push to branch: `git push origin feature/your-feature`
-4. Submit pull request
-
-### Code Standards
-- Follow ESLint/Prettier configuration
-- Write TypeScript (strict mode)
-- Add tests for new features (minimum 80% coverage)
-- Document complex functions with JSDoc
-- Reference relevant issue numbers in commits
-
-### Before Submitting PR
-- [ ] Tests pass locally (`npm test`)
-- [ ] No linting errors (`npm run lint`)
-- [ ] Code formatted (`npm run format`)
-- [ ] Database migrations created if needed
-- [ ] Documentation updated if needed
-- [ ] Commit messages follow convention
+**Permission Examples:**
+```json
+Super Admin permissions: ["shops.create", "shops.delete", "menu.manage", "promotions.create", "analytics.view"]
+Shop Admin permissions: ["orders.manage", "menu.availability", "inventory.update", "employees.manage", "analytics.view"]
+Employee permissions: ["orders.view", "orders.status-update", "menu.availability"]
+```
 
 ---
 
-## 🐛 Known Issues & Limitations
+### 8. Analytics Domain
+**Models:** AnalyticsSnapshot
 
-### Current Phase
-- Guest order tracking is email-based (no persistent order history)
-- DoorDash integration is stubbed (ready for API key)
-- Analytics snapshots not yet automated
-- Email notifications not yet implemented
-- Payment processing relies on external processor
+**Purpose:** Pre-computed metrics for dashboard performance
 
-### Future Enhancements
-- [ ] Loyalty points system
-- [ ] Push notifications
-- [ ] Mobile app (React Native)
-- [ ] Inventory forecasting
-- [ ] Dynamic pricing
-- [ ] Subscription/meal plans
-- [ ] Store ratings and reviews
-- [ ] Referral program
+**Key Relationships:**
+- One snapshot per shop per date per period (unique constraint)
 
----
+**Design Notes:**
+- Snapshots computed daily/weekly/monthly via background job
+- Stores aggregated metrics: totalOrders, totalRevenue, topItems, etc.
+- topItems stored as JSON array for flexibility
+- Null shopId = system-wide metrics
+- Enables fast dashboard queries without scanning millions of orders
 
-## 📞 Support & Contact
-
-### Getting Help
-- 📖 Read [Data Model Documentation](./DATA_MODEL.md) for architecture questions
-- 🔌 Check [API Endpoints Reference](./docs/API_ENDPOINTS_REFERENCE.md) for endpoint details
-- 📋 Review [Implementation Guide](./docs/IMPLEMENTATION_GUIDE.md) for development phases
-- 🐛 Open GitHub issues for bugs
-- 💬 Start discussions for feature requests
-
-### Team
-- **Project Lead:** [Your Name]
-- **Architecture:** [Team Member]
-- **Frontend:** [Team Member]
-- **Backend:** [Team Member]
+**Example Snapshot:**
+```json
+{
+  "shopId": "shop_001",
+  "date": "2024-01-15",
+  "period": "daily",
+  "totalOrders": 42,
+  "totalRevenue": 1125.50,
+  "averageOrderValue": 26.80,
+  "totalCustomers": 38,
+  "newCustomers": 3,
+  "topItems": [
+    { "itemId": "item_001", "name": "Hibachi Chicken", "count": 12, "revenue": 227.88 },
+    { "itemId": "item_002", "name": "Hibachi Shrimp", "count": 10, "revenue": 189.90 }
+  ]
+}
+```
 
 ---
 
-## 📄 License
+## Entity Relationship Overview
 
-This project is licensed under the MIT License - see [LICENSE](./LICENSE) file for details.
+### High-Level Diagram
+
+```
+┌──────────────┐
+│    USER      │ (Identity anchor)
+│  (id, email) │
+└──────┬───────┘
+       │
+       ├──→ UserProfile (1:1) - Bio, preferences, loyalty points
+       ├──→ AuthAccount (1:many) - OAuth/local auth
+       ├──→ Session (1:many) - Active sessions
+       ├──→ Shop (1:1) - If shop admin
+       ├──→ EmployeeAssignment (1:many) - Staff roles
+       ├──→ Order (1:many) - Customer orders
+       ├──→ ShoppingCart (1:many) - Shopping state
+       ├──→ CustomerAddress (1:many) - Delivery addresses
+       └──→ SavedPaymentMethod (1:many) - Payment methods
+
+┌──────────────┐
+│    SHOP      │ (Location)
+│  (id, name)  │
+└──────┬───────┘
+       │
+       ├──→ Address (1:1) - Geographic data
+       ├──→ StoreOperatingHours (1:1) - Business hours
+       ├──→ StoreStatus (1:1) - Real-time state
+       ├──→ ShopMenuItem (1:many) - Menu overrides
+       ├──→ EmployeeAssignment (1:many) - Staff
+       ├──→ Order (1:many) - Received orders
+       ├──→ Promotion (1:many) - Store offers
+       └──→ AnalyticsSnapshot (1:many) - Metrics
+
+┌────────────────┐
+│   MENUITEM     │ (Global)
+│  (id, name)    │
+└────────┬───────┘
+         │
+         ├──→ MenuCategory (many:1) - Categorization
+         ├──→ ModifierGroup (1:many) - Options
+         ├──→ ShopMenuItem (1:many) - Store overrides
+         └──→ OrderItem (1:many) - In orders
+
+┌─────────────┐
+│   ORDER     │ (Purchase)
+│ (id, total) │
+└──────┬──────┘
+       │
+       ├──→ OrderItem (1:many) - Line items
+       ├──→ OrderItemModifier (1:many) - Customizations
+       ├──→ GuestOrderProfile (1:1) - If guest
+       └──→ DoorDashDispatch (1:1) - External order
+```
 
 ---
 
-## 🗺️ Roadmap
+## Complete Model Reference
 
-### Q1 2024
-- [x] Data model design & documentation
-- [ ] Phase 1-3: Auth, Shop, Menu management
-- [ ] Frontend scaffolding
+### User
+Core identity record. Every actor in the system (Super Admin, Shop Admin, Employee, Customer) has a User record.
 
-### Q2 2024
-- [ ] Phase 4-6: Cart, Orders, DoorDash integration
-- [ ] Beta testing with pilot shops
-- [ ] Performance optimization
+```prisma
+model User {
+  id            String    @id @default(cuid())
+  email         String    @unique           // Unique identifier
+  phoneNumber   String?
+  firstName     String?
+  lastName      String?
+  role          UserRole  @default(CUSTOMER)
+  
+  // Relations
+  profile       UserProfile?
+  authAccounts  AuthAccount[]
+  sessions      Session[]
+  shopAdminOf   Shop?
+  employmentRecords EmployeeAssignment[]
+  addresses     CustomerAddress[]
+  orders        Order[]
+  carts         ShoppingCart[]
+  paymentMethods SavedPaymentMethod[]
+  auditLogs     AuditLog[]
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?  // Soft delete
+  
+  @@index([email])
+  @@index([role])
+}
+```
 
-### Q3 2024
-- [ ] Phase 7-9: Promotions, Analytics, RBAC
-- [ ] Security audit & hardening
-- [ ] Production deployment
+**Key Fields:**
+- `role`: UserRole enum (SUPER_ADMIN, SHOP_ADMIN, EMPLOYEE, CUSTOMER, GUEST)
+- `email`: Unique identifier for login
+- `deletedAt`: Soft delete marker (null = active, set = deleted)
 
-### Q4 2024
-- [ ] Launch to production
-- [ ] Monitor metrics & stability
-- [ ] Begin Phase 2 features (loyalty, reviews, etc.)
+**Access Patterns:**
+- Find user by email: `User.findUnique({ where: { email } })`
+- Find all admins: `User.findMany({ where: { role: 'SHOP_ADMIN' } })`
+- Find user with session: `User.include({ sessions: true })`
 
 ---
 
-## 📚 Documentation Index
+### Shop
+Represents a restaurant location. Each shop operates independently but shares global menu.
 
-| Document | Purpose | Audience |
-|----------|---------|----------|
-| [README.md](./README.md) | Project overview | Everyone |
-| [DATA_MODEL.md](./DATA_MODEL.md) | Schema design & architecture | Architects, Developers |
-| [API_ENDPOINTS_REFERENCE.md](./docs/API_ENDPOINTS_REFERENCE.md) | REST API specification | Developers, QA |
-| [IMPLEMENTATION_GUIDE.md](./docs/IMPLEMENTATION_GUIDE.md) | Phase-by-phase roadmap | Project Managers, Developers |
-| [ARCHITECTURE.md](./docs/ARCHITECTURE.md) (future) | System design decisions | Architects |
-| [DEPLOYMENT.md](./docs/DEPLOYMENT.md) (future) | Production setup & ops | DevOps, Developers |
+```prisma
+model Shop {
+  id            String    @id @default(cuid())
+  name          String    // e.g., "Flame Tokyo"
+  description   String?
+  adminId       String?   @unique  // FK to User (SHOP_ADMIN)
+  
+  // Settings
+  status        ShopStatus @default(ACTIVE)
+  phoneNumber   String?
+  email         String?
+  timezone      String    @default("UTC")
+  currency      String    @default("USD")
+  minOrderValue Float     @default(0)
+  deliveryFee   Float     @default(0)
+  
+  // External Integration
+  doorDashStoreId String?
+  
+  // Relations
+  address       Address?
+  operatingHours StoreOperatingHours?
+  storeStatus   StoreStatus?
+  employees     EmployeeAssignment[]
+  menuItems     ShopMenuItem[]
+  orders        Order[]
+  promotions    Promotion[]
+  analyticsSnapshots AnalyticsSnapshot[]
+  auditLogs     AuditLog[]
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?  // Soft delete for closed shops
+  
+  @@index([status])
+  @@index([adminId])
+}
+```
+
+**Key Fields:**
+- `adminId`: Foreign key to User (shop admin)
+- `status`: ShopStatus enum (ACTIVE, INACTIVE, SUSPENDED, ARCHIVED)
+- `doorDashStoreId`: External reference for DoorDash API
+- `timezone`: For correct order timestamps and business hours
+
+**Design Rationale:**
+- Soft delete preserves historical orders even when shop closes
+- Each shop has its own settings (delivery fee, min order) independent of others
+- adminId is unique (one admin per shop in current design; can extend)
 
 ---
 
-## 🙏 Acknowledgments
+### MenuItem
+Global menu item definition shared across all shops. Defines what customers can order.
 
-Built with ❤️ using:
-- [Next.js](https://nextjs.org/)
-- [Prisma](https://www.prisma.io/)
-- [NextAuth.js](https://next-auth.js.org/)
-- [PostgreSQL](https://www.postgresql.org/)
-- [TypeScript](https://www.typescriptlang.org/)
+```prisma
+model MenuItem {
+  id            String    @id @default(cuid())
+  name          String
+  description   String?
+  imageUrl      String?
+  
+  // Categorization
+  categoryId    String
+  
+  // Pricing (global base)
+  basePrice     Float
+  
+  // Properties
+  isVegetarian  Boolean   @default(false)
+  isGlutenFree  Boolean   @default(false)
+  isSpicy       Boolean   @default(false)
+  spicyLevel    Int?      // 1-5
+  
+  // Availability
+  availabilityScope ItemAvailabilityScope @default(STORE_OVERRIDE)
+  globallyAvailable Boolean @default(true)
+  
+  // Relations
+  category      MenuCategory @relation(fields: [categoryId], references: [id])
+  modifierGroups ModifierGroup[]
+  shopItems     ShopMenuItem[]
+  orderItems    OrderItem[]
+  promotions    Promotion[]
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime @updatedAt
+  deletedAt     DateTime?
+  
+  @@index([categoryId])
+  @@index([globallyAvailable])
+}
+```
+
+**Key Fields:**
+- `basePrice`: Global fallback price (can be overridden per shop)
+- `availabilityScope`: Controls override behavior (ALL_SHOPS, SPECIFIC_SHOPS, STORE_OVERRIDE)
+- `globallyAvailable`: Quick flag for querying available items
+- `modifierGroups`: Links to customization options
+
+**Design Pattern:**
+- Super Admin creates MenuItem once
+- Each Shop can override via ShopMenuItem (price, availability, stock)
+- No duplication; one source of truth per item
 
 ---
 
-**Last Updated:** January 2024 | **Version:** 0.1.0 (Pre-Alpha)
+### ShopMenuItem
+Store-specific override for a MenuItem. Allows customization without duplicating the global item.
 
-For the latest updates, check the [CHANGELOG.md](./CHANGELOG.md)
+```prisma
+model ShopMenuItem {
+  id            String    @id @default(cuid())
+  
+  // Composite FK
+  shopId        String
+  itemId        String
+  
+  // Store-specific data
+  price         Float?    // Null = use MenuItem.basePrice
+  availabilityStatus AvailabilityStatus @default(AVAILABLE)
+  stockQuantity Int?      // Null = unlimited
+  
+  storeSpecificNotes String?
+  
+  // Relations
+  shop          Shop      @relation(fields: [shopId], references: [id])
+  item          MenuItem  @relation(fields: [itemId], references: [id])
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@unique([shopId, itemId])  // Prevent duplicates
+  @@index([shopId])
+  @@index([availabilityStatus])
+}
+```
+
+**Key Fields:**
+- `price`: Null means use MenuItem.basePrice; set to override
+- `availabilityStatus`: AVAILABLE, UNAVAILABLE, OUT_OF_STOCK
+- `stockQuantity`: Null = unlimited; integer = tracked inventory
+
+**Example:**
+```
+MenuItem "Hibachi Chicken" basePrice=$18.99 (global)
+  ShopMenuItem for Shop A: price=$19.99, stock=30
+  ShopMenuItem for Shop B: availabilityStatus=OUT_OF_STOCK
+  ShopMenuItem for Shop C: (uses all global values)
+```
+
+---
+
+### Order
+Represents a customer purchase. Immutable after creation (only status updates).
+
+```prisma
+model Order {
+  id            String    @id @default(cuid())
+  orderNumber   String    @unique  // Human-readable
+  
+  // References
+  shopId        String
+  customerId    String?   // Null for guest orders
+  
+  // Status
+  status        OrderStatus @default(PENDING)
+  fulfillmentType FulfillmentType @default(DELIVERY)
+  paymentStatus PaymentStatus @default(PENDING)
+  
+  // Amounts
+  subtotal      Float
+  tax           Float
+  deliveryFee   Float     @default(0)
+  discountAmount Float    @default(0)
+  totalAmount   Float
+  
+  // Promotions
+  appliedCoupons String?   // JSON: ["WELCOME20"]
+  appliedPromotions String? // JSON: ["promo_001"]
+  
+  // Delivery
+  deliveryAddressId String?
+  specialInstructions String?
+  
+  // Payment
+  paymentMethod String?   // "credit_card", "apple_pay", etc.
+  
+  // Relations
+  shop          Shop      @relation(fields: [shopId], references: [id])
+  customer      User?     @relation("OrderCustomer", fields: [customerId], references: [id])
+  guestProfile  GuestOrderProfile?
+  items         OrderItem[]
+  doorDashDispatch DoorDashDispatch?
+  
+  // Timestamps (status progression)
+  confirmedAt   DateTime?
+  prepStartedAt DateTime?
+  readyForPickupAt DateTime?
+  handoffToDoorDashAt DateTime?
+  completedAt   DateTime?
+  cancelledAt   DateTime?
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([customerId])
+  @@index([shopId])
+  @@index([status])
+  @@index([paymentStatus])
+  @@index([createdAt])
+}
+```
+
+**Order Status Flow:**
+```
+PENDING
+  ↓ (shop confirms)
+CONFIRMED
+  ↓ (kitchen starts)
+PREPARING
+  ↓ (food ready)
+READY_FOR_PICKUP
+  ↓ (give to DoorDash)
+HANDOFF_TO_DOORDASH
+  ↓ (delivered)
+COMPLETED
+
+Alternative endings:
+PENDING → CANCELLED (customer cancels before confirmation)
+PREPARING → FAILED (kitchen error, cannot continue)
+```
+
+**Design Notes:**
+- `orderNumber`: Human-readable (e.g., "FJH-2024-00001") for easy reference
+- `customerId`: Null if guest order; uses GuestOrderProfile instead
+- `appliedCoupons`/`appliedPromotions`: JSON arrays for flexible tracking
+- Timestamp fields track status progression; immutable once set
+- Never soft-deleted; maintains full history for analytics
+
+---
+
+### OrderItem
+Line item in an order. Captures exact state at order time.
+
+```prisma
+model OrderItem {
+  id            String    @id @default(cuid())
+  
+  // References
+  orderId       String
+  itemId        String
+  
+  // Amounts (captured at order time)
+  quantity      Int
+  unitPrice     Float     // Price at time of order
+  subtotal      Float     // quantity * unitPrice
+  
+  specialInstructions String?
+  
+  // Relations
+  order         Order     @relation(fields: [orderId], references: [id])
+  item          MenuItem  @relation(fields: [itemId], references: [id])
+  modifiers     OrderItemModifier[]
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([orderId])
+  @@index([itemId])
+}
+```
+
+**Key Fields:**
+- `unitPrice`: Locked in at order time (prevents historical disputes)
+- `subtotal`: quantity × unitPrice (pre-calculated)
+- `modifiers`: Related OrderItemModifier records for customizations
+
+**Purpose:** Preserves exact order state; if menu prices change later, orders retain historical pricing.
+
+---
+
+### GuestOrderProfile
+Stores contact info for guest (non-authenticated) orders.
+
+```prisma
+model GuestOrderProfile {
+  id            String    @id @default(cuid())
+  orderId       String    @unique
+  
+  guestEmail    String
+  guestPhoneNumber String?
+  guestName     String?
+  
+  order         Order     @relation(fields: [orderId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  
+  @@index([guestEmail])
+}
+```
+
+**Design Notes:**
+- Only created if Order.customerId is null (guest checkout)
+- Enables order tracking via email + order number
+- No account required; contact info captured for notifications
+
+---
+
+### DoorDashDispatch
+Tracks external order sync with DoorDash. Separate from Order for clean integration boundary.
+
+```prisma
+model DoorDashDispatch {
+  id            String    @id @default(cuid())
+  
+  orderId       String    @unique
+  shopId        String
+  
+  // DoorDash References
+  doorDashOrderId String? @unique  // External order ID
+  doorDashDeliveryId String?       // Delivery ID
+  
+  // Status
+  handoffStatus String  @default("pending")  // pending, sent, confirmed, completed, failed
+  
+  // Retry Logic
+  errorMessage  String?
+  retryCount    Int     @default(0)
+  lastRetryAt   DateTime?
+  
+  // Debug Info
+  handoffPayload Json?   // Full request sent to DoorDash
+  doorDashResponse Json?  // Full response received
+  
+  // Relations
+  order         Order    @relation(fields: [orderId], references: [id])
+  shop          Shop     @relation(fields: [shopId], references: [id])
+  
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  @@index([orderId])
+  @@index([shopId])
+  @@index([handoffStatus])
+}
+```
+
+**Design Rationale:**
+- Separate from Order for clean decoupling
+- doorDashOrderId uniqueness prevents duplicate sends (idempotent)
+- Stores full request/response for debugging
+- Retry logic with exponential backoff
+
+**Handoff Flow:**
+```
+1. Shop marks order READY_FOR_PICKUP
+2. System creates DoorDashDispatch (handoffStatus="pending")
+3. Call DoorDash API with order data
+4. Store doorDashOrderId in response
+5. Set handoffStatus="sent"
+6. DoorDash webhook updates status as delivery progresses
+7. Finally set handoffStatus="completed"
+
+Retry logic:
+- If API call fails → increment retryCount, set lastRetryAt
+- Exponential backoff: 1 min, 5 min, 15 min, 1 hour
+- Max 3 attempts before manual intervention
+```
+
+---
+
+### Promotion
+Internal marketing offer. Can be global or shop-specific.
+
+```prisma
+model Promotion {
+  id            String    @id @default(cuid())
+  
+  // Scope
+  shopId        String?   // Null = global
+  
+  // Details
+  name          String
+  description   String?
+  type          PromotionType
+  
+  // Discount
+  discountType  CouponType  // PERCENTAGE, FIXED_AMOUNT, etc.
+  discountValue Float
+  
+  // Eligibility
+  minOrderAmount Float?
+  applicableItems String?  // JSON: itemIds or null = all
+  
+  // Scheduling
+  status        PromotionStatus @default(DRAFT)
+  startsAt      DateTime?
+  endsAt        DateTime?
+  
+  // Limits
+  maxUsagePerCustomer Int?
+  maxTotalUsages Int?
+  currentUsageCount Int @default(0)
+  
+  // Relations
+  shop          Shop?     @relation(fields: [shopId], references: [id])
+  
+  // Metadata
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  
+  @@index([shopId])
+  @@index([status])
+}
+```
+
+**Usage Examples:**
+```
+Global: "Welcome 20% Off" for first-time users (shopId=null)
+Store: "Happy Hour 10% Off" 6pm-8pm at Shop A only (shopId="shop_001")
+Limited: "BOGO Shrimp" - buy one, get one free (maxTotalUsages=50)
+```
+
+---
+
+### Coupon
+Redeemable discount code. Created by Super Admin.
+
+```prisma
+model Coupon {
+  id            String    @id @default(cuid())
+  code          String    @unique  // e.g., "WELCOME20"
+  
+  // Discount
+  type          CouponType
+  discountValue Float
+  
+  // Eligibility
+  applicableShops String?   // JSON or null = all
+  applicableItems String?   // JSON or null = all
+  minOrderAmount Float?
+  
+  // Scheduling
+  startsAt      DateTime?
+  endsAt        DateTime?
+  
+  // Limits
+  maxUsagePerCustomer Int?
+  maxTotalUsages Int?
+  currentUsageCount Int @default(0)
+  
+  isActive      Boolean   @default(true)
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  
+  @@index([code])
+  @@index([isActive])
+}
+```
+
+**Validation on Apply:**
+```typescript
+// Pseudo-code for coupon validation
+if (!coupon.isActive) throw InvalidCoupon();
+if (coupon.startsAt > now()) throw CouponNotStarted();
+if (coupon.endsAt < now()) throw CouponExpired();
+if (orderAmount < coupon.minOrderAmount) throw MinimumNotMet();
+if (coupon.applicableShops && !coupon.applicableShops.includes(shopId)) throw NotApplicableToShop();
+if (coupon.maxTotalUsages && coupon.currentUsageCount >= coupon.maxTotalUsages) throw MaxUsagesReached();
+if (coupon.maxUsagePerCustomer && customerUsageCount >= coupon.maxUsagePerCustomer) throw CustomerMaxReached();
+// All checks passed; apply discount
+```
+
+---
+
+### EmployeeAssignment
+Links an employee (User) to a shop with a role and permissions.
+
+```prisma
+model EmployeeAssignment {
+  id            String    @id @default(cuid())
+  
+  // Composite FK
+  userId        String
+  shopId        String
+  
+  // Role & Status
+  employmentStatus EmploymentStatus @default(ACTIVE)
+  role          String    // e.g., "Order Manager", "Kitchen Staff"
+  
+  // Permissions (flexible JSON array)
+  permissions   String[]  @default([])
+  // Examples:
+  // ["orders.manage", "menu.availability", "inventory.update"]
+  // ["orders.view", "orders.status-update"]
+  
+  // Relations
+  user          User      @relation(fields: [userId], references: [id])
+  shop          Shop      @relation(fields: [shopId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+  
+  @@unique([userId, shopId])  // One assignment per user per shop
+  @@index([userId])
+  @@index([shopId])
+  @@index([employmentStatus])
+}
+```
+
+**Permission Examples:**
+```json
+[
+  "orders.view",
+  "orders.manage",
+  "menu.availability",
+  "inventory.update"
+]
+```
+
+---
+
+### AuditLog
+Immutable compliance log. Captures every state change.
+
+```prisma
+model AuditLog {
+  id            String    @id @default(cuid())
+  
+  // Actor
+  actorId       String?   // Null for system actions
+  
+  // Action
+  action        AuditAction
+  entityType    String    // "Order", "MenuItem", "Shop", etc.
+  entityId      String
+  
+  // Context
+  shopId        String?
+  
+  // State Change
+  oldValues     Json?     // Previous state
+  newValues     Json?     // New state
+  changeDescription String?
+  
+  // Forensics
+  ipAddress     String?
+  userAgent     String?
+  
+  // Relations
+  actor         User?     @relation("AuditActorUser", fields: [actorId], references: [id])
+  shop          Shop?     @relation(fields: [shopId], references: [id])
+  
+  createdAt     DateTime  @default(now())
+  
+  @@index([actorId])
+  @@index([entityType])
+  @@index([entityId])
+  @@index([shopId])
+  @@index([createdAt])
+}
+```
+
+**Example Entries:**
+```json
+{
+  "action": "UPDATE",
+  "entityType": "Order",
+  "entityId": "order_001",
+  "actorId": "user_456",
+  "oldValues": { "status": "PENDING" },
+  "newValues": { "status": "CONFIRMED" },
+  "changeDescription": "Order confirmed by shop admin",
+  "ipAddress": "192.168.1.1",
+  "createdAt": "2024-01-15T11:35:00Z"
+}
+```
+
+---
+
+## Relationship Design
+
+### One-to-One Relationships
+
+| Parent | Child | FK Location | Delete Behavior | Notes |
+|--------|-------|------------|-----------------|-------|
+| User | UserProfile | Child | Cascade | Profile auto-deleted with user |
+| Shop | Address | Child | Cascade | Shop address unique |
+| Shop | StoreOperatingHours | Child | Cascade | Hours unique per shop |
+| Shop | StoreStatus | Child | Cascade | Status unique per shop |
+| Order | GuestOrderProfile | Child | Cascade | Only for guest orders |
+| Order | DoorDashDispatch | Child | Cascade | Created at handoff time |
+
+### One-to-Many Relationships
+
+| Parent | Child | Cardinality | Notes |
+|--------|-------|-------------|-------|
+| User | AuthAccount | 1:many | Multiple auth providers per user |
+| User | Session | 1:many | Multiple active sessions |
+| User | EmployeeAssignment | 1:many | One per shop (unique constraint) |
+| User | Order | 1:many | Customer's purchases |
+| User | ShoppingCart | 1:many | One per shop typically |
+| User | CustomerAddress | 1:many | Multiple saved addresses |
+| Shop | ShopMenuItem | 1:many | Override for each global item |
+| Shop | EmployeeAssignment | 1:many | Multiple staff per shop |
+| Shop | Order | 1:many | Orders received by shop |
+| Shop | Promotion | 1:many | Store-specific offers |
+| MenuCategory | MenuItem | 1:many | Items grouped by category |
+| MenuItem | ModifierGroup | 1:many | e.g., sauce, temperature, size |
+| MenuItem | ShopMenuItem | 1:many | Store-specific overrides |
+| ModifierGroup | ModifierOption | 1:many | e.g., spicy, mild, no sauce |
+| Order | OrderItem | 1:many | Line items in order |
+| OrderItem | OrderItemModifier | 1:many | Customizations selected |
+| ShoppingCart | CartItem | 1:many | Items in cart |
+
+### Many-to-Many Relationships (Implicit via JSON)
+
+| Entity A | Entity B | Storage | Notes |
+|----------|----------|---------|-------|
+| Promotion | MenuItem | applicableItems JSON | Flexible item targeting |
+| Coupon | Shop | applicableShops JSON | Flexible shop targeting |
+| Coupon | MenuItem | applicableItems JSON | Flexible item targeting |
+| EmployeeAssignment | Permission | permissions JSON array | Flexible permission model |
+
+---
+
+## Enums Reference
+
+### UserRole
+```prisma
+enum UserRole {
+  SUPER_ADMIN    // System-wide control
+  SHOP_ADMIN     // Single shop control
+  EMPLOYEE       // Shop operations
+  CUSTOMER       // End user
+  GUEST          // Unauthenticated
+}
+```
+
+---
+
+**Last Updated:** January 2024 | **Version:** 1.0.0
