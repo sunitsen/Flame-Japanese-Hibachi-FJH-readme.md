@@ -20,6 +20,21 @@ This roadmap outlines the path from project initialization to the full productio
 
 ---
 
+## 📋 Planning Phase: Data Model Definition (FJH-120)
+**Goal:** Define and validate the system's data architecture.
+
+### Subtasks:
+- [x] **FJH-36:** Identify core entities (Users, Stores, Menu, Orders, Promotions, etc.)
+- [x] **FJH-44:** Define entity relationships (high-level)
+- [x] **FJH-83:** Define base schema structure (users, stores, menu, orders, etc.)
+- [x] **FJH-84:** Define multi-store schema structure (store-specific vs global data)
+- [x] **FJH-95:** Validate data model against functional requirements
+
+> [!NOTE]
+> Detailed technical documentation for these tasks can be found in [DATA_MODEL.md](./DATA_MODEL.md).
+
+---
+
 ## 📊 Phase 2: Master Development Timeline
 **Total Estimated Duration:** 15-16 weeks
 

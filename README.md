@@ -8,7 +8,7 @@ A production-ready, full-stack restaurant management platform built with a modul
 
 - [Overview](#overview)
 - [🗺️ Development Roadmap](./roadmap/README.md)
-- [📊 Data Model Definition](./Data%20Model%20Definition.md)
+- [📊 Data Model Definition](./roadmap/DATA_MODEL.md)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
