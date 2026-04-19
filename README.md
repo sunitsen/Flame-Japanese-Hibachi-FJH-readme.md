@@ -8,7 +8,10 @@ A production-ready, full-stack restaurant management platform built with a modul
 
 - [Overview](#overview)
 - [🗺️ Development Roadmap](./roadmap/README.md)
-- [📊 Data Model Definition](./roadmap/DATA_MODEL.md)
+- [📊 Project Tasks](#-project-tasks)
+- [📈 Data Model Definition](./Data%20Model%20Definition/README.md)
+- [🏗️ Technical Requirement Definition](./Technical%20Requirement%20Definition/README.md)
+- [🏢 Multi-Store System Design](./Multi-Store%20System%20Design/README.md)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
@@ -36,6 +39,18 @@ A production-ready, full-stack restaurant management platform built with a modul
 - **Scalable Backend:** Robust API supporting menus, orders, users, locations, and more
 
 **Key Philosophy:** Performance, maintainability, and clean architecture through modular design.
+
+---
+
+## 📊 Project Tasks
+
+This repository is organized by task-specific folders to track planning and implementation details:
+
+| Task Folder | Description | Status |
+|:--- |:--- |:--- |
+| [**Data Model Definition**](./Data%20Model%20Definition/README.md) | Core database entity & relationship design. | ✅ Done |
+| [**Technical Requirement Definition**](./Technical%20Requirement%20Definition/README.md) | Tech stack, architecture, and core system requirements. | ✅ Done |
+| [**Multi-Store System Design**](./Multi-Store%20System%20Design/README.md) | Data separation, overrides, and store selection logic. | 🏗️ In Progress |
 
 ---
 
