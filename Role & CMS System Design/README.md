@@ -8,8 +8,8 @@ This task defines the security and content management architecture for Flame Jap
 | :--- | :--- | :--- |
 | **Guest** | Browse menu, view locations, add to cart. | Public |
 | **Logged-in** | Order history, saved addresses, loyalty points. | Private (User) |
-| **Store Admin** | Manage store menu, view store orders, update store hours. | Scoped (Store) |
-| **Global Admin** | Create stores, manage all users, global system settings. | Full (System) |
+| **Store Admin** | Manage local orders, **Toggle availability only** (Stock on/off). | Scoped (Store) |
+| **Global Admin** | Create stores, **Set Prices**, edit Menu items, full system control. | Full (System) |
 
 ## 🏗️ CMS Architecture Approach
 **Decision: Custom Built-in CMS**

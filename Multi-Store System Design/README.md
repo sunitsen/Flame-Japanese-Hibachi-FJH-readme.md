@@ -41,10 +41,12 @@ To support multi-tenancy, the following relational rules are enforced:
 *   **Middleware Detection**: A Next.js Middleware intercepts requests to check for a `selected_shop` cookie. If missing, it triggers a redirect to the `/location-picker`.
 
 ### 3. FJH-88: Data Override Engine (Global vs Store-Level)
-This is the most critical logic for franchise operations.
+This ensures pricing consistency while allowing local inventory control.
 *   **Priority Logic**: `Store_Override` > `Global_Default`.
-*   **Implementation**: An `ItemOverride` table will store specific price/availability values.
-    *   *Example*: If "Steak Hibachi" is $15 globally but $17 in NYC, the NYC store ID will have a record in `ItemOverride` linked to that item ID.
+*   **Restricted Access**: 
+    *   **Prices & Data**: Only **Global Admins** can set or override prices for specific stores.
+    *   **Stock/Availability**: **Store Admins** can only toggle `isAvailable` status (e.g., marking an item as "Sold Out" locally).
+*   **Implementation**: A `ShopItemSettings` table stores overrides with strict **RBAC checks** on the price fields.
 
 ### 4. FJH-89: Selection & Persistence Logic
 *   **Storage**: `localStorage` for UI state and **Encrypted HttpOnly Cookies** for server-side availability.
