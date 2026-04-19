@@ -1,36 +1,76 @@
-# Multi-Store System Design (FJH-120)
+# 🏢 Multi-Store System Design (FJH-120)
 
-## 📝 Description
-As a technical team, we need to define the multi-store system logic so that the application can support multiple franchise locations with proper data separation, overrides, and user experience.
-This includes handling store-specific data, global configurations, and store selection behavior.
+## 📖 Overview
+The Flame Japanese Hibachi platform is designed as a **Multi-Tenant / Multi-Location** application. This design ensures that while we maintain a single codebase and database, each franchise location (Shop) can operate independently with its own menu prices, staff, and operating hours.
 
-## ✅ Acceptance Criteria
-- [ ] **Multi-store data structure is defined**: Database schema supports multiple `Shop` entities with relational data.
-- [ ] **Store-level vs global data behavior is defined**: Clear distinction between global settings (e.g., system roles) and store-specific settings (e.g., menu pricing).
-- [ ] **Store selection flow is defined**: UI/UX flow for customers to select their preferred location.
-- [ ] **Store selection persistence logic is defined**: Use of cookies/session to remember selected store.
-- [ ] **Data override rules (global vs store-level) are defined**: Logic for when store-specific data should supersede global defaults.
-- [ ] **Design supports all store-related functional requirements**: Alignment with the overall project architectural goals.
+## 📐 System Architecture
+```mermaid
+graph TD
+    subgraph Global_Level
+        GA[Global Admin] --> GM[Global Menu Items]
+        GM --> GP[Base Pricing]
+    end
 
-## 📋 Subtasks
+    subgraph Store_Level
+        S1[Store 1: Dallas]
+        S2[Store 2: Houston]
+    end
 
-### 1. FJH-85: Define multi-store data structure
-- Create a `Shop` model in Prisma.
-- Link `Menu`, `Order`, and `Staff` to `ShopId`.
-- Ensure data isolation between shops.
+    GP -- Fallback --> S1
+    GP -- Fallback --> S2
 
-### 2. FJH-87: Define how multiple store locations are handled
-- Implementation of a "Store Switcher" or "Location Picker".
-- URL-based or Cookie-based store identification (e.g., `/store-1/menu`).
+    SO1[Store 1 Overrides] --> S1
+    SO2[Store 2 Overrides] --> S2
 
-### 3. FJH-88: Define global vs store-level data overrides
-- Implementation of "Item Override" logic.
-- A global menu item can have a different price or availability status at a specific shop.
+    Customer --> SP{Store Picker}
+    SP --> S1
+    SP --> S2
+```
 
-### 4. FJH-89: Define store selection and persistence logic
-- Save `selected_shop_id` in local storage or encrypted cookies.
-- Redirect logic if no shop is selected upon entering the app.
+## 📋 Technical Requirements Breakdown
+
+### 1. FJH-85: Data Structure Definition
+To support multi-tenancy, the following relational rules are enforced:
+*   **Primary Key Isolation**: All operational models (`Order`, `CartItem`, `Staff`, `MenuCategory`) must include a `shopId` foreign key.
+*   **Model Relations**:
+    *   `Shop`: The root entity containing location headers, addresses, and status.
+    *   `ShopSettings`: Specific configurations like `taxRate`, `deliveryRadius`, and `isAcceptingOrders`.
+
+### 2. FJH-87: Multiple Location Handling
+*   **Routing Strategy**: We utilize **dynamic segment routing** (e.g., `fjh.com/[shop-slug]/menu`).
+*   **Middleware Detection**: A Next.js Middleware intercepts requests to check for a `selected_shop` cookie. If missing, it triggers a redirect to the `/location-picker`.
+
+### 3. FJH-88: Data Override Engine (Global vs Store-Level)
+This is the most critical logic for franchise operations.
+*   **Priority Logic**: `Store_Override` > `Global_Default`.
+*   **Implementation**: An `ItemOverride` table will store specific price/availability values.
+    *   *Example*: If "Steak Hibachi" is $15 globally but $17 in NYC, the NYC store ID will have a record in `ItemOverride` linked to that item ID.
+
+### 4. FJH-89: Selection & Persistence Logic
+*   **Storage**: `localStorage` for UI state and **Encrypted HttpOnly Cookies** for server-side availability.
+*   **Persistence**: Once a store is selected, the cart is "locked" to that location to prevent cross-location order errors.
 
 ---
-**Status:** In Progress 🏗️
+
+## 👨‍💻 Developer Implementation Guide
+
+### Store Context Provider
+Developers should use the `useShop` hook to access the current shop context across the application:
+```typescript
+const { currentShop, isLoading } = useShop();
+```
+
+### Data Fetching Pattern
+Always include the `shopId` in your Prisma queries:
+```typescript
+const items = await prisma.menuItem.findMany({
+  where: {
+    shopId: currentShop.id,
+    isAvailable: true,
+  }
+});
+```
+
+---
+**Status:** Architecture Defined ✅ | **Implementation Stage:** Phase 2 (Shop Management)
 **Parent Task:** [FJH-120 Planning Phase](../roadmap/README.md)
