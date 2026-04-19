@@ -6,25 +6,25 @@ The Flame Japanese Hibachi platform is designed as a **Multi-Tenant / Multi-Loca
 ## 📐 System Architecture
 ```mermaid
 graph TD
-    subgraph Global_Level
+    subgraph Global_Control[Global Admin Control]
         GA[Global Admin] --> GM[Global Menu Items]
         GM --> GP[Base Pricing]
+        GA --> SPO[Store Price Overrides]
     end
 
-    subgraph Store_Level
-        S1[Store 1: Dallas]
-        S2[Store 2: Houston]
+    subgraph Store_Local[Store Owner Control]
+        SA[Store Admin] --> SAT[Local Availability Toggles]
     end
 
-    GP -- Fallback --> S1
-    GP -- Fallback --> S2
-
-    SO1[Store 1 Overrides] --> S1
-    SO2[Store 2 Overrides] --> S2
+    subgraph Menu_Resolution[Final Menu Presentation]
+        GP -- Fallback --> MR[Menu Engine]
+        SPO -- Priority --> MR
+        SAT -- Stock Status --> MR
+    end
 
     Customer --> SP{Store Picker}
-    SP --> S1
-    SP --> S2
+    SP -- Selected Store --> MR
+    MR --> View[Customer Sees Correct Price & Stock]
 ```
 
 ## 📋 Technical Requirements Breakdown
