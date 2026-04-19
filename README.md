@@ -12,6 +12,7 @@ A production-ready, full-stack restaurant management platform built with a modul
 - [📈 Data Model Definition](./Data%20Model%20Definition/README.md)
 - [🏗️ Technical Requirement Definition](./Technical%20Requirement%20Definition/README.md)
 - [🏢 Multi-Store System Design](./Multi-Store%20System%20Design/README.md)
+- [🔐 Role & CMS System Design](./Role%20&%20CMS%20System%20Design/README.md)
 - [Tech Stack](#tech-stack)
 - [Architecture](#architecture)
 - [Project Structure](#project-structure)
@@ -51,6 +52,7 @@ This repository is organized by task-specific folders to track planning and impl
 | [**Data Model Definition**](./Data%20Model%20Definition/README.md) | Core database entity & relationship design. | ✅ Done |
 | [**Technical Requirement Definition**](./Technical%20Requirement%20Definition/README.md) | Tech stack, architecture, and core system requirements. | ✅ Done |
 | [**Multi-Store System Design**](./Multi-Store%20System%20Design/README.md) | Data separation, overrides, and store selection logic. | 🏗️ In Progress |
+| [**Role & CMS System Design**](./Role%20&%20CMS%20System%20Design/README.md) | RBAC permissions, user roles, and CMS structure. | 🏗️ In Progress |
 
 ---
 

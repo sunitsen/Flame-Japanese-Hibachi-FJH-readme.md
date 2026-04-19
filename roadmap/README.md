@@ -24,12 +24,19 @@ This roadmap outlines the path from project initialization to the full productio
 - [x] **FJH-92: [Data Model Definition](../Data%20Model%20Definition/README.md)**
 - [x] **FJH-75: [Technical Requirement Definition](../Technical%20Requirement%20Definition/README.md)**
 - [ ] **FJH-120: [Multi-Store System Design](../Multi-Store%20System%20Design/README.md)** (In Progress)
+- [ ] **FJH-94: [Role & CMS System Design](../Role%20&%20CMS%20System%20Design/README.md)** (In Progress)
 
 ### Subtasks for FJH-120:
 - [ ] **FJH-85:** Define multi-store data structure
 - [ ] **FJH-87:** Define how multiple store locations are handled
 - [ ] **FJH-88:** Define global vs store-level data overrides
 - [ ] **FJH-89:** Define store selection and persistence logic
+
+### Subtasks for FJH-94:
+- [ ] **FJH-43:** Define CMS approach (custom vs external)
+- [ ] **FJH-45:** Define role-based access structure
+- [ ] **FJH-86:** Map roles to system features
+- [ ] **FJH-90:** Define content update behavior (global vs store-specific)
 
 > [!NOTE]
 > Detailed technical documentation for these tasks can be found in [DATA_MODEL.md](./DATA_MODEL.md).
