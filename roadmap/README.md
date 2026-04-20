@@ -37,6 +37,9 @@ This roadmap outlines the path from project initialization to the full productio
 - [ ] **FJH-107: [External Services & Communication Design](../External%20Services%20&%20Communication%20Design/README.md)** (In Progress)
     *   Select email provider (Resend).
     *   Setup Map/Geolocation interaction logic.
+- [ ] **FJH-113: [Business Logic – Promotions & Catering](../Business%20Logic%20%E2%80%93%20Promotions%20&%20Catering/README.md)** (In Progress)
+    *   Setup Promotion Engine rules.
+    *   Define Catering submission workflow.
 
 
 ---

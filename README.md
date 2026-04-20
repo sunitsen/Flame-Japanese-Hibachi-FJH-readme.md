@@ -82,6 +82,7 @@ Flame-Japanese-Hibachi-FJH/
 ├── 📂 Role & CMS System Design/       # FJH-94 Specifications
 ├── 📂 Authentication & Session Design/# FJH-96 Specifications
 ├── 📂 External Services & Communication Design/# FJH-107 Specifications
+├── 📂 Business Logic – Promotions & Catering/# FJH-113 Specifications
 ├── 📂 Payment & Transaction Flow Design/# FJH-102 Specifications
 ├── 📂 .github/                        # PR/Issue Templates & Workflows
 ├── 📄 .env.example                    # SECURE YOUR SECRETS!
