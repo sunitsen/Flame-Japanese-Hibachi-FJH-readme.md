@@ -31,6 +31,9 @@ This roadmap outlines the path from project initialization to the full productio
 - [ ] **FJH-94: [Role & CMS System Design](../Role%20&%20CMS%20System%20Design/README.md)** (In Progress)
     *   Implement RBAC permission mapping.
     *   Setup dashboard views for different roles.
+- [ ] **FJH-96: [Authentication & Session Design](../Authentication%20&%20Session%20Design/README.md)** (In Progress)
+    *   Define auth methods (Social vs Credentials).
+    *   Setup session persistence logic.
 
 ---
 

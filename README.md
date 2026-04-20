@@ -73,15 +73,17 @@ We use a **Modular Monolith** pattern. This ensures that while the codebase is i
 
 ```bash
 Flame-Japanese-Hibachi-FJH/
-├── 📂 app/                  # Next.js App Router (Routes & Pages)
-├── 📂 components/           # Atomic Design UI Components
-├── 📂 lib/                  # Shared Services (DB, Auth, API Clients)
-├── 📂 prisma/               # Schema & Migrations
-├── 📂 roadmap/              # Detailed Task Tracking & Data Models
-├── 📂 docs/                 # Extended Technical Documentation
-├── 📂 .github/              # PR/Issue Templates & Workflows
-├── 📄 .env.example          # SECURE YOUR SECRETS!
-└── 📄 STATUS.md             # Real-time project health dashboard
+├── 📂 app/                            # Next.js App Router (Routes & Pages)
+├── 📂 components/                     # Atomic Design UI Components
+├── 📂 lib/                            # Shared Services (DB, Auth, API Clients)
+├── 📂 prisma/                         # Schema & Migrations
+├── 📂 roadmap/                        # Detailed Task Tracking & Data Models
+├── 📂 Multi-Store System Design/      # FJH-120 Specifications
+├── 📂 Role & CMS System Design/       # FJH-94 Specifications
+├── 📂 Authentication & Session Design/# FJH-96 Specifications
+├── 📂 .github/                        # PR/Issue Templates & Workflows
+├── 📄 .env.example                    # SECURE YOUR SECRETS!
+└── 📄 STATUS.md                       # Real-time project health dashboard
 ```
 
 ---
