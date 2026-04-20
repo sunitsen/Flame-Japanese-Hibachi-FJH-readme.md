@@ -1,74 +1,52 @@
-# 🗺️ Flame Japanese Hibachi Development Roadmap
+# 🗺️ Flame Japanese Hibachi Project Blueprint
 
-This roadmap outlines the path from project initialization to the full production launch. It serves as the master planning document for the **Flame Japanese Hibachi** platform.
-
-**Quick Links:** [📊 Current Status](../STATUS.md) | [🚀 Release Notes](./RELEASE_NOTES.md) | [📈 Data Model](./DATA_MODEL.md)
+This document provides the high-level technical strategy and logical architecture of the **Flame Japanese Hibachi** platform. It is designed to be a developer-friendly guide to understanding how the system is built and how work is structured.
 
 ---
 
-## 🏗️ Phase 1: Foundation & Repository Setup (COMPLETE)
-**Goal:** Establish the technical skeleton and infrastructure.
+## 🛠️ Master Tech Stack
+The project leverages a modern, typesafe, and high-performance stack:
 
-1.  **Initialize Repository** ✅
-    *   Setup folder structure and standardized README.
-    *   Configure basic CI/CD templates and project metadata.
-2.  **Standards & Documentation** ✅
-    *   Define `.env.example`, PR templates, and Issue templates.
-    *   Establish technical requirement definitions.
-3.  **Database Design** ✅
-    *   Finalize Prisma schema with 27 core models.
-    *   Define relationship constraints and indexing strategy.
-
----
-
-## 📊 Phase 2: Core Identity & Store Management (ACTIVE)
-**Goal:** Authenticate users and define the physical restaurant locations.
-
-### Tasks:
-- [ ] **FJH-120: [Multi-Store System Design](../Multi-Store%20System%20Design/README.md)** (In Progress)
-    *   Define global vs store-level data overrides.
-    *   Implement store selection logic.
-- [ ] **FJH-94: [Role & CMS System Design](../Role%20&%20CMS%20System%20Design/README.md)** (In Progress)
-    *   Implement RBAC permission mapping.
-    *   Setup dashboard views for different roles.
-- [ ] **FJH-96: [Authentication & Session Design](../Authentication%20&%20Session%20Design/README.md)** (In Progress)
-    *   Define auth methods (Social vs Credentials).
-    *   Setup session persistence logic.
-- [ ] **FJH-107: [External Services & Communication Design](../External%20Services%20&%20Communication%20Design/README.md)** (In Progress)
-    *   Select email provider (Resend).
-    *   Setup Map/Geolocation interaction logic.
-- [ ] **FJH-113: [Business Logic – Promotions & Catering](../Business%20Logic%20%E2%80%93%20Promotions%20&%20Catering/README.md)** (In Progress)
-    *   Setup Promotion Engine rules.
-    *   Define Catering submission workflow.
-
+*   **Framework**: [Next.js](https://nextjs.org/) (App Router & Server Components)
+*   **Language**: [TypeScript](https://www.typescriptlang.org/) (Strict Mode)
+*   **Database & ORM**: [PostgreSQL](https://www.postgresql.org/) + [Prisma ORM](https://www.prisma.io/)
+*   **Authentication**: [NextAuth.js](https://next-auth.js.org/) (JWT Strategy)
+*   **State Management**: [Zustand](https://github.com/pmndrs/zustand)
+*   **Styling**: Vanilla CSS / Tailwind (Responsive Design)
+*   **Integrations**: 
+    *   **DoorDash Drive API**: Logistics & Delivery
+    *   **Stripe**: Payment Processing
+    *   **Resend**: Email Communication
+    *   **Google Maps**: Geolocation & Store Selection
 
 ---
 
-## 🔮 Phase 3: Menu & Ordering (PLANNED)
-**Goal:** The core commerce experience.
+## 🏗️ Project Architecture & Modules
 
-1. **Global Menu Engine:** Universal items with per-store overrides.
-2. **Stateful Cart:** Complex modifier support and persistence.
-3. **Checkout Flow:** Payment integration and order number generation.
-- [ ] **FJH-102: [Payment & Transaction Flow Design](../Payment%20&%20Transaction%20Flow%20Design/README.md)** (In Progress)
-    *   Select payment gateway (Stripe/Square).
-    *   Define DoorDash vs Direct payment logic.
+Instead of strict calendar deadlines, the project is organized into **Logical Layers**. Each module listed below has its own dedicated documentation folder in the root directory.
+
+### Layer 1: Core Foundation (COMPLETED)
+*   **FJH-75: [Technical Requirement Definition](../Technical%20Requirement%20Definition/README.md)**: Universal system constraints.
+*   **FJH-92: [Data Model Definition](../Data%20Model%20Definition/README.md)**: The Prisma schema and relationship maps.
+
+### Layer 2: Identity & Store Management (ACTIVE)
+*   **FJH-93: [Multi-Store System Design](../Multi-Store%20System%20Design/README.md)**: Global vs Store-level inheritance.
+*   **FJH-94: [Role & CMS System Design](../Role%20&%20CMS%20System%20Design/README.md)**: RBAC Matrix and Dynamic Content slots.
+*   **FJH-96: [Authentication & Session Design](../Authentication%20&%20Session%20Design/README.md)**: NextAuth configuration and guest sessions.
+*   **FJH-107: [External Services & Communication](../External%20Services%20&%20Communication%20Design/README.md)**: Email notifications (Resend) and Google Maps.
+*   **FJH-113: [Business Logic – Promotions & Catering](../Business%20Logic%20–%20Promotions%20&%20Catering/README.md)**: Promotion engine and bulk order logic.
+
+### Layer 3: Commerce & Ordering (PLANNED)
+*   **FJH-102: [Payment & Transaction Flow](../Payment%20&%20Transaction%20Flow%20Design/README.md)**: Checkout logic, Stripe integration, and DoorDash handoffs.
+*   **Menu Engine**: Universal items with location-based overrides.
+*   **Stateful Cart**: Client-side persistence and modifier logic.
 
 ---
 
 ## 🍱 Deliverables Manifest
-- **[DATA_MODEL.md](./DATA_MODEL.md):** The authoritative schema reference.
-- **[DELIVERABLES_SUMMARY.md](./DELIVERABLES_SUMMARY.md):** High-level summary of what's built.
+- **[DATA_MODEL.md](./DATA_MODEL.md):** The authoritative database reference.
 - **[GITHUB_STRUCTURE.md](./GITHUB_STRUCTURE.md):** Repository organization guide.
 
 ---
 
-## 🎯 Success Metrics
-- **Performance:** Sub-100ms API response time for menu fetches.
-- **Accuracy:** 100% order traceability via `AuditLog`.
-- **Reliability:** 99.9% uptime for the ordering gateway.
-
----
-
-**Last Updated:** 2026-04-20 | **Version:** 1.0.0 Roadmap
-
+**Last Updated:** 2026-04-20 | **Version:** 1.1.0 Blueprint (No-Time-Tracking Mode)

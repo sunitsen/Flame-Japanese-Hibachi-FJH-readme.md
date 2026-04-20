@@ -2,7 +2,7 @@
 
 A premium, production-ready restaurant management platform. FJH powers multi-location hibachi operations with high-performance ordering, intelligent staff workflows, and deep analytics.
 
-**Quick Links:** [📊 Project Status](./STATUS.md) | [🗺️ Roadmap](./roadmap/README.md) | [📚 API Docs](#api-documentation) | [🛡️ Security](#-security--compliance)
+**Quick Links:** [📊 Project Status](./STATUS.md) | [🗺️ Project Blueprint](./roadmap/README.md) | [📚 API Docs](#api-documentation) | [🛡️ Security](#-security--compliance)
 
 ---
 
@@ -77,8 +77,10 @@ Flame-Japanese-Hibachi-FJH/
 ├── 📂 components/                     # Atomic Design UI Components
 ├── 📂 lib/                            # Shared Services (DB, Auth, API Clients)
 ├── 📂 prisma/                         # Schema & Migrations
-├── 📂 roadmap/                        # Detailed Task Tracking & Data Models
-├── 📂 Multi-Store System Design/      # FJH-120 Specifications
+├── 📂 roadmap/                        # Overall Blueprint & Data Model Reference
+├── 📂 Technical Requirement Definition/# FJH-75 Specifications
+├── 📂 Data Model Definition/          # FJH-92 Specifications
+├── 📂 Multi-Store System Design/      # FJH-93 Specifications
 ├── 📂 Role & CMS System Design/       # FJH-94 Specifications
 ├── 📂 Authentication & Session Design/# FJH-96 Specifications
 ├── 📂 External Services & Communication Design/# FJH-107 Specifications
@@ -176,7 +178,7 @@ npm run type-check
 
 ---
 
-## 🤝 Contributing
+## 🛠️ Development Workflow
 
 sudo service postgresql status  # Linux
 brew services list             # macOS
@@ -217,6 +219,12 @@ npx prisma migrate resolve --rolled-back migration_name
 
 ---
 
+## 🤝 Contributing
+
+We follow a strict Gitflow process. All feature branches must be merged via PR after passing automated tests.
+
+---
+
 ## 📄 License
 
 This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
@@ -226,7 +234,6 @@ This project is licensed under the MIT License. See the [LICENSE](LICENSE) file 
 ## 📞 Support & Contact
 
 - **Issues:** [GitHub Issues](https://github.com/sunitsen/Flame-Japanese-Hibachi-FJH/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/sunitsen/Flame-Japanese-Hibachi-FJH/discussions)
 - **Email:** support@fjh.local
 
 ---
