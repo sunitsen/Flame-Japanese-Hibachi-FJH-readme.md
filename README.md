@@ -81,6 +81,7 @@ Flame-Japanese-Hibachi-FJH/
 ├── 📂 Multi-Store System Design/      # FJH-120 Specifications
 ├── 📂 Role & CMS System Design/       # FJH-94 Specifications
 ├── 📂 Authentication & Session Design/# FJH-96 Specifications
+├── 📂 Payment & Transaction Flow Design/# FJH-102 Specifications
 ├── 📂 .github/                        # PR/Issue Templates & Workflows
 ├── 📄 .env.example                    # SECURE YOUR SECRETS!
 └── 📄 STATUS.md                       # Real-time project health dashboard

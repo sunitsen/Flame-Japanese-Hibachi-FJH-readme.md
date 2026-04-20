@@ -43,6 +43,9 @@ This roadmap outlines the path from project initialization to the full productio
 1. **Global Menu Engine:** Universal items with per-store overrides.
 2. **Stateful Cart:** Complex modifier support and persistence.
 3. **Checkout Flow:** Payment integration and order number generation.
+- [ ] **FJH-102: [Payment & Transaction Flow Design](../Payment%20&%20Transaction%20Flow%20Design/README.md)** (In Progress)
+    *   Select payment gateway (Stripe/Square).
+    *   Define DoorDash vs Direct payment logic.
 
 ---
 
