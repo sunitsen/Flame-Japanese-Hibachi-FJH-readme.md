@@ -34,6 +34,10 @@ This roadmap outlines the path from project initialization to the full productio
 - [ ] **FJH-96: [Authentication & Session Design](../Authentication%20&%20Session%20Design/README.md)** (In Progress)
     *   Define auth methods (Social vs Credentials).
     *   Setup session persistence logic.
+- [ ] **FJH-107: [External Services & Communication Design](../External%20Services%20&%20Communication%20Design/README.md)** (In Progress)
+    *   Select email provider (Resend).
+    *   Setup Map/Geolocation interaction logic.
+
 
 ---
 
